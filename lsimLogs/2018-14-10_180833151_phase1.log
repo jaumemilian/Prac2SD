@@ -1,0 +1,3 @@
+14-10-2018 18:08:33:151 phase1 [TRACE] : Inserting into Log the operation: AddOperation [recipe=[aaa, bbb, phase1], timestamp=localhost:9000:   0]
+14-10-2018 18:08:33:323 phase1 [TRACE] : Operation can not be inserted because there are some operations pending to be logged: AddOperation [recipe=[aaa, bbb, phase1], timestamp=localhost:9000:   0]
+14-10-2018 18:08:33:324 phase1 [TRACE] : Updating the TimestampVectorInserting with the timestamp: localhost:9000:   0
