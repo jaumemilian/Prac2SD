@@ -112,21 +112,21 @@ public class Phase1 implements ApplicationManager {
             users = init.getUsers();
         	operations =init.getOperations();
 
-        	lsim.log(Level.INFO, "List of users: " + users.toString());
-        	lsim.log(Level.INFO, "List of operations:\n" + operations.toString());
+        	//lsim.log(Level.INFO, "List of users: " + users.toString());
+        	//lsim.log(Level.INFO, "List of operations:\n" + operations.toString());
 
         	// apply operations locally
         	Log log = new Log(users);
         	TimestampVector summary = new TimestampVector(users);
         	for (int i=0; i<operations.size(); i++){
         		log.add(operations.get(i));
-            	lsim.log(Level.TRACE, "Log updated:\n" +log.toString());
+            	//lsim.log(Level.TRACE, "Log updated:\n" +log.toString());
         		summary.updateTimestamp(operations.get(i).getTimestamp());
-            	lsim.log(Level.TRACE, "Summary updated:\n" + summary.toString());
+            	//lsim.log(Level.TRACE, "Summary updated:\n" + summary.toString());
         	}
 
-            lsim.log(Level.INFO, "Log:\n" + log.toString());
-            lsim.log(Level.INFO, "Summary:\n" + summary.toString());
+            //lsim.log(Level.INFO, "Log:\n" + log.toString());
+            //lsim.log(Level.INFO, "Summary:\n" + summary.toString());
 
         	// send result to localTestServer
         	ServerResult serverResult = new ServerResult(groupId, null, new Recipes(), log, summary, null);
@@ -203,8 +203,8 @@ public class Phase1 implements ApplicationManager {
     	String groupId = init.getGroupId();
     	List<String> users = init.getUsers();
     	List<Operation> operations = init.getOperations();
-    	lsim.log(Level.INFO, "List of users: " + users.toString());
-    	lsim.log(Level.INFO, "List of operations:\n" + operations.toString());
+    	//lsim.log(Level.INFO, "List of users: " + users.toString());
+    	//lsim.log(Level.INFO, "List of operations:\n" + operations.toString());
 		// ------------------------------------------------
 		// start
 		// ------------------------------------------------
@@ -220,13 +220,13 @@ public class Phase1 implements ApplicationManager {
         TimestampVector summary = new TimestampVector(users);
         for (int i=0; i<operations.size(); i++){
         	log.add(operations.get(i));
-        	lsim.log(Level.TRACE, "Log updated:\n" +log.toString());
+        	//lsim.log(Level.TRACE, "Log updated:\n" +log.toString());
         	summary.updateTimestamp(operations.get(i).getTimestamp());
-        	lsim.log(Level.TRACE, "Summary updated:\n" + summary.toString());
+        	//lsim.log(Level.TRACE, "Summary updated:\n" + summary.toString());
         }
         
-        lsim.log(Level.INFO, "Log:\n" + log.toString());
-        lsim.log(Level.INFO, "Summary:\n" + summary.toString());
+        //lsim.log(Level.INFO, "Log:\n" + log.toString());
+        //lsim.log(Level.INFO, "Summary:\n" + summary.toString());
 		// ------------------------------------------------
 		// sendResults
 		// ------------------------------------------------
@@ -249,7 +249,7 @@ public class Phase1 implements ApplicationManager {
 		// stop
 		// ------------------------------------------------
 		
-		lsim.log(Level.INFO, "END");
+		//lsim.log(Level.INFO, "END");
 		lsim.stop(new DummyHandler());		
 	}
 	

@@ -75,12 +75,12 @@ public class CoordinatorPhase1InitHandler implements Handler {
 			users.add("user"+String.valueOf(i));
 			seqnum[i] = 0;
 		}
-		lsim.log(Level.INFO, "[CoordinatorPhase1] Users created:\n" + users.toString());
+		//lsim.log(Level.INFO, "[CoordinatorPhase1] Users created:\n" + users.toString());
 		// create local TimestampVector and Log
 		summary = new TimestampVector(users);
-		lsim.log(Level.INFO, "[CoordinatorPhase1] New summary created:\n" + summary.toString());
+		//lsim.log(Level.INFO, "[CoordinatorPhase1] New summary created:\n" + summary.toString());
 		log = new Log(users);
-		lsim.log(Level.INFO, "[CoordinatorPhase1] New log created:\n" + log.toString());
+		//lsim.log(Level.INFO, "[CoordinatorPhase1] New log created:\n" + log.toString());
 		// create list of operations
 		//List<Operation> operations = new Vector<Operation>();
 		Random rnd = new Random();
@@ -104,17 +104,17 @@ public class CoordinatorPhase1InitHandler implements Handler {
 			Timestamp ts = new Timestamp(users.get(user), seqnum[user]++);
 			
 			Recipe rcpe = new Recipe(String.valueOf(chars), "Content--"+String.valueOf(chars), users.get(user), ts);
-			lsim.log(Level.TRACE, "[CoordinatorPhase1] New recipe created: " + rcpe.toString());
+			//lsim.log(Level.TRACE, "[CoordinatorPhase1] New recipe created: " + rcpe.toString());
 			log.add(new AddOperation(rcpe, ts));
 			summary.updateTimestamp(ts);
-			lsim.log(Level.TRACE, "[CoordinatorPhase1] Log updated: " + log.toString());
-			lsim.log(Level.TRACE, "[CoordinatorPhase1] Summary updated: " + summary.toString());
+			//lsim.log(Level.TRACE, "[CoordinatorPhase1] Log updated: " + log.toString());
+			//lsim.log(Level.TRACE, "[CoordinatorPhase1] Summary updated: " + summary.toString());
 			
 			operations.add(new AddOperation(rcpe, ts));
 		}
-		lsim.log(Level.INFO, "[CoordinatorPhase1] List of operations: " + operations.toString());
-		lsim.log(Level.INFO, "[CoordinatorPhase1] Log: " + log.toString());
-		lsim.log(Level.INFO, "[CoordinatorPhase1] Summary: " + summary.toString());
+		//lsim.log(Level.INFO, "[CoordinatorPhase1] List of operations: " + operations.toString());
+		//lsim.log(Level.INFO, "[CoordinatorPhase1] Log: " + log.toString());
+		//lsim.log(Level.INFO, "[CoordinatorPhase1] Summary: " + summary.toString());
 		
 //		paramsServer.put("users",users);
 //		try {
@@ -130,16 +130,16 @@ public class CoordinatorPhase1InitHandler implements Handler {
 			for(String worker_type : lsim.getWorkerTypes()){
 				for(String instance_name : lsim.getAllWorkersByType(worker_type)){
 					lsim.addInitParam(instance_name, "users", users);
-					lsim.log(Level.INFO,"Add user to the instance " + instance_name);
+					//lsim.log(Level.INFO,"Add user to the instance " + instance_name);
 					lsim.addInitParam(instance_name, "operations", Serializer.serialize(operations));
-					lsim.log(Level.INFO,"Add operations to the instance " + instance_name);
+					//lsim.log(Level.INFO,"Add operations to the instance " + instance_name);
 				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		lsim.log(Level.INFO,"END");
+		//lsim.log(Level.INFO,"END");
 		return null;
 	}
 

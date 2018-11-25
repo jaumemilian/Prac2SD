@@ -63,7 +63,7 @@ public class TimestampVector implements Serializable{
 	 * @param timestamp
 	 */
 	public void updateTimestamp(Timestamp timestamp){
-		lsim.log(Level.TRACE, "Updating the TimestampVectorInserting with the timestamp: "+timestamp);
+		//lsim.log(Level.TRACE, "Updating the TimestampVectorInserting with the timestamp: "+timestamp);
 				
 		if (timestamp != null)
 		{

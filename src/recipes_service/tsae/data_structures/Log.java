@@ -70,7 +70,7 @@ public class Log implements Serializable{
 	 * @return true if op is inserted, false otherwise.
 	 */
 	public boolean add(Operation op){
-		lsim.log(Level.TRACE, "Inserting into Log the operation: "+op);
+		//lsim.log(Level.TRACE, "Inserting into Log the operation: "+op);
 		
 		// Get the currentHostId from the operation timestamp
 		String currentHostId = op.getTimestamp().getHostid();
@@ -97,12 +97,12 @@ public class Log implements Serializable{
 				return true;
 			}
 
-			lsim.log(Level.TRACE, "Operation failed when being added: "+op);
+			//lsim.log(Level.TRACE, "Operation failed when being added: "+op);
 			return false;
 		}
 		else
 		{
-			lsim.log(Level.TRACE, "Operation can not be inserted because there are some operations pending to be logged: "+op);
+			//lsim.log(Level.TRACE, "Operation can not be inserted because there are some operations pending to be logged: "+op);
 			return false;
 		}		
 	}
