@@ -68,7 +68,25 @@ public class TimestampMatrix implements Serializable{
 	{
 		if (tsMatrix != null)
 		{
-			
+			// For each node in current timestampMatrix, check if there is vector 
+			// in the matrix passed as a parameter, and execute the upddateMax for them
+			for(Enumeration<String> node = this.timestampMatrix.keys(); node.hasMoreElements();){
+				
+				// Get the nodeId
+				String nodeId = node.nextElement();
+				
+				// Get the TimesampVector value of the same nodeId for the other TimestampMatrix
+				TimestampVector tsMatrixNodeVector = tsMatrix.getTimestampVector(nodeId);
+				
+				if (tsMatrixNodeVector != null)
+				{
+					// Get Current TimestampVector
+					TimestampVector currentVector = this.getTimestampVector(nodeId);
+					
+					// Call the updateMax for the TimestampVector
+					currentVector.updateMax(tsMatrixNodeVector);
+				}
+			}		
 		}
 	}
 	
