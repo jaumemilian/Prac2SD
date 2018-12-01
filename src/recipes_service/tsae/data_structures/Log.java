@@ -117,8 +117,35 @@ public class Log implements Serializable{
 	 */
 	public List<Operation> listNewer(TimestampVector sum){
 		
-		// return generated automatically. Remove it when implementing your solution 
-		return null;
+		List<Operation> listOfNewOperations = new Vector<Operation>();
+		
+		// Foreach node in the current log, check if there are operations that are missing
+		// in the sum vector passed, to be returned in the list		
+		for(Enumeration<String> node = this.log.keys(); node.hasMoreElements();)
+		{
+			// Get the nodeId
+			String nodeId = node.nextElement();
+			
+			Timestamp timestampFromSum = sum.getLast(nodeId);
+			
+			// Get the operations of the nodeId from current log
+			List<Operation> currentNodeOperations = this.log.get(nodeId);
+			
+			// Loop all the operations to check the ones that are missing in the log
+			for(Operation currentOperation : currentNodeOperations)
+			{
+				// Get the timestamp of the current operation
+				Timestamp currentOperationTimestamp = currentOperation.getTimestamp();
+				
+				// Check (against the sum vector) if the operation is missing in the log
+				if (currentOperationTimestamp.compare(timestampFromSum) > 0)
+				{
+					listOfNewOperations.add(currentOperation);
+				}
+			}			
+		}		
+		
+		return listOfNewOperations;
 	}
 	
 	/**
