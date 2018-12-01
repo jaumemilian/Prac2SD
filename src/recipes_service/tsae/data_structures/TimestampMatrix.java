@@ -105,7 +105,7 @@ public class TimestampMatrix implements Serializable{
 	{
 		if (tsVector != null)
 		{
-			this.timestampMatrix.replace(node, tsVector);
+			this.timestampMatrix.put(node, tsVector);
 		}
 	}
 	
