@@ -110,9 +110,28 @@ public class TimestampMatrix implements Serializable{
 	 */
 	public TimestampVector minTimestampVector(){
 		
-		TimestampVector minTimestampVector = null;
+		TimestampVector minTimestampVector = null;		
 		
-		// 
+		// For each node in current timestampMatrix, get the minimum value 
+		// and store in the minTimestampVector
+		for(Enumeration<String> node = this.timestampMatrix.keys(); node.hasMoreElements();){
+			
+			// Get the nodeId
+			String nodeId = node.nextElement();
+			
+			// Get the TimesampVector value
+			TimestampVector currentVector = this.getTimestampVector(nodeId);
+			
+			// If it is the first time, get all the values from the current vector
+			if (minTimestampVector == null)
+			{
+				minTimestampVector = currentVector.clone();
+			}
+			else
+			{
+				minTimestampVector.mergeMin(currentVector);
+			}
+		}				
 		
 		return minTimestampVector;
 	}
