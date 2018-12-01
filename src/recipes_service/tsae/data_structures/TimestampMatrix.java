@@ -50,6 +50,12 @@ public class TimestampMatrix implements Serializable{
 		}
 	}
 	
+	// Constructor without parameters for clone purposes
+    private TimestampMatrix()
+    {
+    	
+    }
+	
 	/**
 	 * Not private for testing purposes.
 	 * @param node
@@ -141,9 +147,21 @@ public class TimestampMatrix implements Serializable{
 	 */
 	public TimestampMatrix clone(){
 		
-		// return generated automatically. Remove it when implementing your solution
+		TimestampMatrix timestampMatrixCloned = new TimestampMatrix();
 		
-		return null;
+		for(Enumeration<String> node = this.timestampMatrix.keys(); node.hasMoreElements();)
+		{
+			// Get the nodeId
+			String nodeId = node.nextElement();
+			
+			// Get a clone of the TimestampVector of the current node
+			TimestampVector vectorCloned = this.getTimestampVector(nodeId).clone();					
+						
+			// Add the cloned vector to the MatrixCloned instance
+			timestampMatrixCloned.timestampMatrix.put(nodeId, vectorCloned);
+		}
+		
+		return timestampMatrixCloned;
 	}
 	
 	/**
