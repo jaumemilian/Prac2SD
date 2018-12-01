@@ -77,7 +77,12 @@ public class TimestampMatrix implements Serializable{
 	 * @param node
 	 * @param tsVector
 	 */
-	public void update(String node, TimestampVector tsVector){
+	public void update(String node, TimestampVector tsVector)
+	{
+		if (tsVector != null)
+		{
+			this.timestampMatrix.replace(node, tsVector);
+		}
 	}
 	
 	/**
