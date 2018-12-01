@@ -130,6 +130,28 @@ public class TimestampVector implements Serializable{
 	 *  @param tsVector (timestamp vector)
 	 */
 	public void mergeMin(TimestampVector tsVector){
+		if (tsVector != null)
+		{
+			// For each node in current timestampvector, check if there is value 
+			// in the passed as a parameter vector, and get the min value from both
+			for(Enumeration<String> node = this.timestampVector.keys(); node.hasMoreElements();){
+				
+				// Get the nodeId
+				String nodeId = node.nextElement();
+				
+				// Get the value of the same nodeId for the other TimestampVector
+				Timestamp tsVectorNodeValue = tsVector.getLast(nodeId);
+				
+				if (tsVectorNodeValue != null)
+				{
+					// Compare if the Timestamp of the node passed by parameter is greater than the current one
+					if (this.getLast(nodeId).compare(tsVectorNodeValue) > 0) 
+					{
+						this.timestampVector.replace(nodeId, tsVectorNodeValue);
+					}
+				}
+			}			
+		}
 	}
 	
 	/**
