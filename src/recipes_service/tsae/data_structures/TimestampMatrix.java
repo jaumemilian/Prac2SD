@@ -57,15 +57,19 @@ public class TimestampMatrix implements Serializable{
 	 */
 	TimestampVector getTimestampVector(String node){
 		
-		// return generated automatically. Remove it when implementing your solution 
-		return null;
+		return this.timestampMatrix.get(node);
 	}
 	
 	/**
 	 * Merges two timestamp matrix taking the elementwise maximum
 	 * @param tsMatrix
 	 */
-	public void updateMax(TimestampMatrix tsMatrix){
+	public void updateMax(TimestampMatrix tsMatrix)
+	{
+		if (tsMatrix != null)
+		{
+			
+		}
 	}
 	
 	/**
@@ -102,12 +106,22 @@ public class TimestampMatrix implements Serializable{
 	
 	/**
 	 * equals
-	 */
+	 */	
 	@Override
 	public boolean equals(Object obj) {
-		
-		// return generated automatically. Remove it when implementing your solution 
-		return false;
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TimestampMatrix other = (TimestampMatrix) obj;
+		if (this.timestampMatrix == null) {
+			if (other.timestampMatrix != null)
+				return false;
+		} else if (!timestampMatrix.equals(other.timestampMatrix))
+			return false;
+		return true;
 	}
 
 	
@@ -127,4 +141,6 @@ public class TimestampMatrix implements Serializable{
 		}
 		return all;
 	}
+
+	
 }
