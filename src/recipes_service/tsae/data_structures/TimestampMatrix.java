@@ -83,8 +83,11 @@ public class TimestampMatrix implements Serializable{
 	 */
 	public TimestampVector minTimestampVector(){
 		
-		// return generated automatically. Remove it when implementing your solution 
-		return null;
+		TimestampVector minTimestampVector = null;
+		
+		// 
+		
+		return minTimestampVector;
 	}
 	
 	/**
@@ -92,7 +95,8 @@ public class TimestampMatrix implements Serializable{
 	 */
 	public TimestampMatrix clone(){
 		
-		// return generated automatically. Remove it when implementing your solution 
+		// return generated automatically. Remove it when implementing your solution
+		
 		return null;
 	}
 	

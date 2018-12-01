@@ -57,6 +57,15 @@ public class TimestampVector implements Serializable{
 			timestampVector.put(id, new Timestamp(id, Timestamp.NULL_TIMESTAMP_SEQ_NUMBER));
 		}
 	}
+	
+	/** 
+	 * Constructor that creates a new instance of TimestampVector from a ConcurrentHashMap<String, Timestamp>
+	 * @param timestampVector
+	 */
+	public TimestampVector(ConcurrentHashMap<String, Timestamp> timestampVector)
+	{
+		this.timestampVector = new ConcurrentHashMap<String, Timestamp>(timestampVector);
+	}
 
 	/**
 	 * Updates the timestamp vector with a new timestamp. 
@@ -89,8 +98,7 @@ public class TimestampVector implements Serializable{
 	 */
 	public Timestamp getLast(String node){
 		
-		// return generated automatically. Remove it when implementing your solution 
-		return null;
+		return this.timestampVector.get(node);
 	}
 	
 	/**
@@ -107,8 +115,8 @@ public class TimestampVector implements Serializable{
 	 */
 	public TimestampVector clone(){
 		
-		// return generated automatically. Remove it when implementing your solution 
-		return null;
+		// Return a clone of the current TimestampVector object
+		return new TimestampVector(this.timestampVector);
 	}
 	
 	/**
