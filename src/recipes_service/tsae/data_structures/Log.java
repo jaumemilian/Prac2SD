@@ -156,6 +156,44 @@ public class Log implements Serializable{
 	 * @param ack: ackSummary.
 	 */
 	public void purgeLog(TimestampMatrix ack){
+		
+		// Get the minTimestampsVector that will determine the operations that can be removed from the log
+		TimestampVector minTimestampVector = ack.minTimestampVector();
+		
+		// Foreach node in the current log, remove operations that can be removed
+		for(Enumeration<String> node = this.log.keys(); node.hasMoreElements();)
+		{
+			// Get the nodeId
+			String nodeId = node.nextElement();
+			
+			// Get the operations of the nodeId from current log
+			List<Operation> currentNodeOperations = this.log.get(nodeId);
+			
+			// Get the minimum timestamp from the minTimestampVector for the current node
+			Timestamp minTimestampForNode = minTimestampVector.getLast(nodeId);
+			
+			if (minTimestampForNode != null)
+			{
+				// Loop all the operations to check if can be removed from the log
+				// As operations from the list will be removed, loop it from back to front
+				for (int i = currentNodeOperations.size() -1; i >=0; i--)
+				{
+					// Get the timestamp of the current operation
+					Timestamp currentOperationTimestamp = currentNodeOperations.get(i).getTimestamp();
+					
+					// Check (against the sum vector) if the operation is missing in the log
+					if (currentOperationTimestamp.compare(minTimestampForNode) < 0)
+					{
+						currentNodeOperations.remove(i);
+					}					
+				}
+								
+			}
+			
+			
+		}
+		
+		
 	}
 
 	/**
