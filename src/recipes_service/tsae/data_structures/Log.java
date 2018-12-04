@@ -87,7 +87,7 @@ public class Log implements Serializable{
 		}		
 		
 		// Check if the current operation is next for the last stored in the log 
-		if (op.getTimestamp().compare(lastTimestamp) == 1)
+		if (op.getTimestamp().compare(lastTimestamp) >= 1)
 		{
 			// Add the operation to the operation list
 			if (operationList.add(op))
@@ -182,7 +182,7 @@ public class Log implements Serializable{
 					Timestamp currentOperationTimestamp = currentNodeOperations.get(i).getTimestamp();
 					
 					// Check (against the sum vector) if the operation is missing in the log
-					if (currentOperationTimestamp.compare(minTimestampForNode) < 0)
+					if (currentOperationTimestamp.compare(minTimestampForNode) <= 0)
 					{
 						currentNodeOperations.remove(i);
 					}					
