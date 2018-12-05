@@ -79,15 +79,17 @@ public class Log implements Serializable{
 		List<Operation> operationList = log.get(currentHostId);
 		
 		// Initialize lastTimestamp as it was no timestamp
-		Timestamp lastTimestamp = new Timestamp(currentHostId, -1);
+		Timestamp lastTimestamp = null;
 		
 		if (operationList != null & operationList.size() > 0) {
 			// Get the last timestamp from the last operation
 			lastTimestamp = operationList.get(operationList.size()-1).getTimestamp();
 		}		
 		
-		// Check if the current operation is next for the last stored in the log 
-		if (op.getTimestamp().compare(lastTimestamp) >= 1)
+		// NOTE: From the question asked in the Forum, if there was no operation in the log
+		// It is accepeted whatever operation we receive, if there was operation in the log:
+		// check if the current operation is next for the last stored in the log 
+		if (lastTimestamp==null || op.getTimestamp().compare(lastTimestamp) == 1)
 		{
 			// Add the operation to the operation list
 			if (operationList.add(op))
