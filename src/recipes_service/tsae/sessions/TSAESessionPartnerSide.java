@@ -151,7 +151,9 @@ public class TSAESessionPartnerSide extends Thread{
 						// Update the Summary and Ack After processing the operations 
 						this.serverData.getSummary().updateMax(msgAeRequest.getSummary());
 						this.serverData.getAck().updateMax(msgAeRequest.getAck());
-						//serverData.getLog().purgeLog(serverData.getAck());
+						
+						// Purge the log with the operations processed by all nodes
+						this.serverData.getLog().purgeLog(serverData.getAck());
 					}
 				}
 				
