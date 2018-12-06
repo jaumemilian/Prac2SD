@@ -31,6 +31,7 @@ import recipes_service.communication.Host;
 import recipes_service.communication.Hosts;
 import recipes_service.data.AddOperation;
 import recipes_service.data.Operation;
+import recipes_service.data.OperationType;
 import recipes_service.data.Recipe;
 import recipes_service.data.Recipes;
 import recipes_service.tsae.data_structures.Log;
@@ -156,6 +157,14 @@ public class ServerData {
 	
 	public synchronized void removeRecipe(String recipeTitle){
 		System.err.println("Error: removeRecipe method (recipesService.serverData) not yet implemented");
+	}
+	
+	public synchronized void processOperation(AddOperation operation)
+	{
+		if (this.log.add(operation))
+		{
+			this.recipes.add(operation.getRecipe());
+		}		
 	}
 	
 

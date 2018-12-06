@@ -35,7 +35,9 @@ import recipes_service.communication.MessageAErequest;
 import recipes_service.communication.MessageEndTSAE;
 import recipes_service.communication.MessageOperation;
 import recipes_service.communication.MsgType;
+import recipes_service.data.AddOperation;
 import recipes_service.data.Operation;
+import recipes_service.data.OperationType;
 import recipes_service.tsae.data_structures.TimestampMatrix;
 import recipes_service.tsae.data_structures.TimestampVector;
 
@@ -77,28 +79,49 @@ public class TSAESessionPartnerSide extends Thread{
 			lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] TSAE session");
 			lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] received message: "+ msg);
 			if (msg.type() == MsgType.AE_REQUEST){
-				// ...
 				
-	            // send operations
-					// ...
-					msg.setSessionNumber(current_session_number);
-					out.writeObject(msg);
-					lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] sent message: "+ msg);
-
-		
-				// send to originator: local's summary and ack
+				// Cast the message to a MessageAERequest as it is just validated it is from this type
+				MessageAErequest msgAeRequest = (MessageAErequest) msg;
+				
 				TimestampVector localSummary = null;
 				TimestampMatrix localAck = null;
+				
+				// Get the current values for localSummary and localAck
+				// It is synchronized in order to prevent the localSummary change meanwhile is used for the ack
+				synchronized (serverData)
+				{
+					localSummary = serverData.getSummary().clone();
+					
+					//Update the localAck with the currentSummary
+					serverData.getAck().update(serverData.getId(), localSummary);
+					
+					localAck = serverData.getAck().clone();
+				}				
+								
+				// Get the list of operations that are not in the parter summary
+				List<Operation> operationsToSend = serverData.getLog().listNewer(msgAeRequest.getSummary());
+				
+	            // For each operation that is not in the originator, send it
+				for (Operation operation: operationsToSend)
+				{
+					out.writeObject(new MessageOperation(operation));
+				}			
+				
+				// send to originator: local's summary and ack
 				msg = new MessageAErequest(localSummary, localAck);
 				msg.setSessionNumber(current_session_number);
 	 	        out.writeObject(msg);
 				lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] sent message: "+ msg);
+								
 
-	            // receive operations
+				// Read the operations received
+				List<MessageOperation> operationsFromOriginator = new Vector<MessageOperation>();
 				msg = (Message) in.readObject();
 				lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] received message: "+ msg);
 				while (msg.type() == MsgType.OPERATION){
-					// ...
+					// Add the operation read to a memory list
+					operationsFromOriginator.add((MessageOperation)msg);
+					
 					msg = (Message) in.readObject();
 					lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] received message: "+ msg);
 				}
@@ -110,6 +133,26 @@ public class TSAESessionPartnerSide extends Thread{
 					msg.setSessionNumber(current_session_number);
 		            out.writeObject(msg);					
 					lsim.log(Level.TRACE, "[TSAESessionPartnerSide] [session: "+current_session_number+"] sent message: "+ msg);
+					
+					// At this point the TSAE session has ended properly
+					// Process the operations from the Partner
+					// It is synchronized in order to prevent the localSummary change meanwhile 
+					// is used for the ack in a distributed system
+					synchronized (serverData)
+					{
+						for (MessageOperation operation: operationsFromOriginator)
+						{
+							if (operation.getOperation().getType()== OperationType.ADD)
+							{
+								serverData.processOperation((AddOperation)operation.getOperation());
+							}							
+						}
+						
+						// Update the Summary and Ack After processing the operations 
+						this.serverData.getSummary().updateMax(msgAeRequest.getSummary());
+						this.serverData.getAck().updateMax(msgAeRequest.getAck());
+						//serverData.getLog().purgeLog(serverData.getAck());
+					}
 				}
 				
 			}

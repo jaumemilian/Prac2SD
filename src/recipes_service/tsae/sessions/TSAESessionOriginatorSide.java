@@ -36,7 +36,9 @@ import recipes_service.communication.MessageAErequest;
 import recipes_service.communication.MessageEndTSAE;
 import recipes_service.communication.MessageOperation;
 import recipes_service.communication.MsgType;
+import recipes_service.data.AddOperation;
 import recipes_service.data.Operation;
+import recipes_service.data.OperationType;
 import recipes_service.tsae.data_structures.TimestampMatrix;
 import recipes_service.tsae.data_structures.TimestampVector;
 import communication.ObjectInputStream_DS;
@@ -93,7 +95,10 @@ public class TSAESessionOriginatorSide extends TimerTask{
 	 */
 	private void sessionTSAE(Host n){
 		int current_session_number = session_number.incrementAndGet();
+		
 		if (n == null) return;
+		
+		//System.out.println("Starting TSAE Session: " + current_session_number);
 		
 		lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] TSAE session");
 
@@ -105,43 +110,82 @@ public class TSAESessionOriginatorSide extends TimerTask{
 			TimestampVector localSummary = null;
 			TimestampMatrix localAck = null;
 			
+			// Get the current values for localSummary and localAck
+			// It is synchronized in order to prevent the localSummary change meanwhile is used for the ack
+			synchronized (serverData)
+			{
+				localSummary = this.serverData.getSummary().clone();
+								
+				//Update the localAck with the currentSummary
+				this.serverData.getAck().update(this.serverData.getId(), localSummary);
+				
+				localAck = this.serverData.getAck().clone();
+			}
+			
 			// Send to partner: local's summary and ack
 			Message	msg = new MessageAErequest(localSummary, localAck);
 			msg.setSessionNumber(current_session_number);
             out.writeObject(msg);
-			lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] sent message: "+msg);
+			lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] sent message: "+msg);					
 
             // receive operations from partner
+			List<MessageOperation> operationsFromPartner = new Vector<MessageOperation>();
 			msg = (Message) in.readObject();
 			lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] received message: "+msg);
 			while (msg.type() == MsgType.OPERATION){
-				// ...
+				// Add the operation read
+				operationsFromPartner.add((MessageOperation)msg);
 				msg = (Message) in.readObject();
 				lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] received message: "+msg);
 			}
 
             // receive partner's summary and ack
 			if (msg.type() == MsgType.AE_REQUEST){
-				// ...
+			
+				// Cast the message to a MessageAERequest as it is just validated it is from this type
+				MessageAErequest msgAeRequest = (MessageAErequest) msg;
 				
-				// send operations
+				// Get the list of operations that are not in the parter summary
+				List<Operation> operationsToSend = serverData.getLog().listNewer(msgAeRequest.getSummary());
 				
-				//...
-					msg.setSessionNumber(current_session_number);
-					out.writeObject(msg);
-					lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] sent message: "+msg);
+				// For each operation that is not in the partner, send it
+				for (Operation operation : operationsToSend)
+				{
+					out.writeObject(new MessageOperation(operation));
+				}
 
 				// send and "end of TSAE session" message
 				msg = new MessageEndTSAE();  
 				msg.setSessionNumber(current_session_number);
 	            out.writeObject(msg);					
 				lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] sent message: "+msg);
-
+				
 				// receive message to inform about the ending of the TSAE session
 				msg = (Message) in.readObject();
 				lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] received message: "+msg);
 				if (msg.type() == MsgType.END_TSAE){
-					// 
+					// At this point the TSAE session has ended properly
+					// Process the operations from the Partner
+					// It is synchronized in order to prevent the localSummary change meanwhile 
+					// is used for the ack in a distributed system
+					synchronized (serverData)
+					{
+						for (MessageOperation operation: operationsFromPartner)
+						{
+							if (operation.getOperation().getType()== OperationType.ADD)
+							{
+								// Process the operation
+								serverData.processOperation((AddOperation)operation.getOperation());
+							}							
+						}
+						
+						// Update the Summary and Ack After processing the operations 
+						serverData.getSummary().updateMax(msgAeRequest.getSummary());
+						serverData.getAck().updateMax(msgAeRequest.getAck());
+						//serverData.getLog().purgeLog(serverData.getAck());
+					}
+					
+					
 				}
 
 			}			
@@ -152,8 +196,10 @@ public class TSAESessionOriginatorSide extends TimerTask{
 			e.printStackTrace();
             System.exit(1);
 		}catch (IOException e) {
+			lsim.log(Level.FATAL, "[TSAESessionOriginatorSide] [session: "+current_session_number+"]" + e.getMessage());
 	    }
 
+		//System.out.println("End TSAE Session: " + current_session_number);
 		
 		lsim.log(Level.TRACE, "[TSAESessionOriginatorSide] [session: "+current_session_number+"] End TSAE session");
 	}
