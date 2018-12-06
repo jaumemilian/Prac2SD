@@ -71,7 +71,7 @@ public class TimestampVector implements Serializable{
 	 * Updates the timestamp vector with a new timestamp. 
 	 * @param timestamp
 	 */
-	public void updateTimestamp(Timestamp timestamp){
+	public synchronized void updateTimestamp(Timestamp timestamp){
 		//lsim.log(Level.TRACE, "Updating the TimestampVectorInserting with the timestamp: "+timestamp);
 				
 		if (timestamp != null)
@@ -87,7 +87,7 @@ public class TimestampVector implements Serializable{
 	 * merge in another vector, taking the elementwise maximum
 	 * @param tsVector (a timestamp vector)
 	 */
-	public void updateMax(TimestampVector tsVector){
+	public synchronized void updateMax(TimestampVector tsVector){
 		if (tsVector != null)
 		{
 			// For each node in current timestampvector, check if there is value 
@@ -129,7 +129,7 @@ public class TimestampVector implements Serializable{
 	 * After merging, local node will have the smallest timestamp for each node.
 	 *  @param tsVector (timestamp vector)
 	 */
-	public void mergeMin(TimestampVector tsVector){
+	public synchronized void mergeMin(TimestampVector tsVector){
 		if (tsVector != null)
 		{
 			// For each node in current timestampvector, check if there is value 

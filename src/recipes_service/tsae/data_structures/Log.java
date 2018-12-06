@@ -69,7 +69,7 @@ public class Log implements Serializable{
 	 * @param op
 	 * @return true if op is inserted, false otherwise.
 	 */
-	public boolean add(Operation op){
+	public synchronized boolean add(Operation op){
 		//lsim.log(Level.TRACE, "Inserting into Log the operation: "+op);
 		
 		// Get the currentHostId from the operation timestamp
@@ -117,7 +117,7 @@ public class Log implements Serializable{
 	 * @param sum
 	 * @return list of operations
 	 */
-	public List<Operation> listNewer(TimestampVector sum){
+	public synchronized List<Operation> listNewer(TimestampVector sum){
 		
 		List<Operation> listOfNewOperations = new Vector<Operation>();
 		
@@ -157,7 +157,7 @@ public class Log implements Serializable{
 	 * ackSummary. 
 	 * @param ack: ackSummary.
 	 */
-	public void purgeLog(TimestampMatrix ack){
+	public synchronized void purgeLog(TimestampMatrix ack){
 		
 		// Get the minTimestampsVector that will determine the operations that can be removed from the log
 		TimestampVector minTimestampVector = ack.minTimestampVector();

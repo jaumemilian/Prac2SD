@@ -70,7 +70,7 @@ public class TimestampMatrix implements Serializable{
 	 * Merges two timestamp matrix taking the elementwise maximum
 	 * @param tsMatrix
 	 */
-	public void updateMax(TimestampMatrix tsMatrix)
+	public synchronized void updateMax(TimestampMatrix tsMatrix)
 	{
 		if (tsMatrix != null)
 		{
@@ -114,7 +114,7 @@ public class TimestampMatrix implements Serializable{
 	 * @return a timestamp vector containing, for each node, 
 	 * the timestamp known by all participants
 	 */
-	public TimestampVector minTimestampVector(){
+	public synchronized TimestampVector minTimestampVector(){
 		
 		TimestampVector minTimestampVector = null;		
 		
