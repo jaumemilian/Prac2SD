@@ -29,11 +29,13 @@ import lsim.worker.LSimWorker;
 import recipes_service.activity_simulation.SimulationData;
 import recipes_service.communication.Host;
 import recipes_service.communication.Hosts;
+import recipes_service.communication.MessageOperation;
 import recipes_service.data.AddOperation;
 import recipes_service.data.Operation;
 import recipes_service.data.OperationType;
 import recipes_service.data.Recipe;
 import recipes_service.data.Recipes;
+import recipes_service.data.RemoveOperation;
 import recipes_service.tsae.data_structures.Log;
 import recipes_service.tsae.data_structures.Timestamp;
 import recipes_service.tsae.data_structures.TimestampMatrix;
@@ -156,17 +158,31 @@ public class ServerData {
 	}
 	
 	public synchronized void removeRecipe(String recipeTitle){
-		System.err.println("Error: removeRecipe method (recipesService.serverData) not yet implemented");
+		
+		Timestamp timestamp= nextTimestamp();
+		Recipe rcpe = this.recipes.get(recipeTitle);
+		Operation op = new RemoveOperation(recipeTitle, rcpe.getTimestamp(), timestamp);
+
+		this.log.add(op);
+		this.summary.updateTimestamp(timestamp);
+		this.recipes.remove(recipeTitle);
 	}
 	
-	public synchronized void processOperation(AddOperation operation)
+	public synchronized void processOperation(AddOperation addOperation)
 	{
-		if (this.log.add(operation))
+		if (this.log.add(addOperation))
 		{
-			this.recipes.add(operation.getRecipe());
+			this.recipes.add(addOperation.getRecipe());
 		}		
 	}
 	
+	public synchronized void processOperation(RemoveOperation removeOperation)
+	{								
+		if (this.log.add(removeOperation))
+		{
+			this.recipes.remove(removeOperation.getRecipeTitle());
+		}		
+	}	
 
 	// ****************************************************************************
 	// *** operations to get the TSAE data structures. Used to send to evaluation

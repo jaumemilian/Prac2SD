@@ -38,6 +38,7 @@ import recipes_service.communication.MsgType;
 import recipes_service.data.AddOperation;
 import recipes_service.data.Operation;
 import recipes_service.data.OperationType;
+import recipes_service.data.RemoveOperation;
 import recipes_service.tsae.data_structures.TimestampMatrix;
 import recipes_service.tsae.data_structures.TimestampVector;
 
@@ -145,7 +146,12 @@ public class TSAESessionPartnerSide extends Thread{
 							if (operation.getOperation().getType()== OperationType.ADD)
 							{
 								serverData.processOperation((AddOperation)operation.getOperation());
-							}							
+							}
+							else
+							{
+								// Process the operation
+								serverData.processOperation((RemoveOperation)operation.getOperation());
+							}
 						}
 						
 						// Update the Summary and Ack After processing the operations 

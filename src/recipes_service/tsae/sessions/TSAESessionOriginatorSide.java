@@ -39,6 +39,7 @@ import recipes_service.communication.MsgType;
 import recipes_service.data.AddOperation;
 import recipes_service.data.Operation;
 import recipes_service.data.OperationType;
+import recipes_service.data.RemoveOperation;
 import recipes_service.tsae.data_structures.TimestampMatrix;
 import recipes_service.tsae.data_structures.TimestampVector;
 import communication.ObjectInputStream_DS;
@@ -176,7 +177,11 @@ public class TSAESessionOriginatorSide extends TimerTask{
 							{
 								// Process the operation
 								serverData.processOperation((AddOperation)operation.getOperation());
-							}							
+							}else
+							{
+								// Process the operation
+								serverData.processOperation((RemoveOperation)operation.getOperation());
+							}								
 						}
 						
 						// Update the Summary and Ack After processing the operations 
