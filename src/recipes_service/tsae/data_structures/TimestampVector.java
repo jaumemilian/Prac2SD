@@ -118,7 +118,7 @@ public class TimestampVector implements Serializable{
 	 * @return the last timestamp issued by node that has been
 	 * received.
 	 */
-	public Timestamp getLast(String node){
+	public synchronized Timestamp getLast(String node){
 		
 		return this.timestampVector.get(node);
 	}
@@ -157,7 +157,7 @@ public class TimestampVector implements Serializable{
 	/**
 	 * clone
 	 */
-	public TimestampVector clone(){
+	public synchronized TimestampVector clone(){
 		
 		// Return a clone of the current TimestampVector object
 		return new TimestampVector(this.timestampVector);
@@ -166,7 +166,7 @@ public class TimestampVector implements Serializable{
 	/**
 	 * equals
 	 */
-	public boolean equals(Object obj)
+	public synchronized boolean equals(Object obj)
 	{
 		if (this == obj)
 			return true;

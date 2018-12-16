@@ -61,7 +61,7 @@ public class TimestampMatrix implements Serializable{
 	 * @param node
 	 * @return the timestamp vector of node in this timestamp matrix
 	 */
-	TimestampVector getTimestampVector(String node){
+    synchronized TimestampVector getTimestampVector(String node){
 		
 		return this.timestampMatrix.get(node);
 	}
@@ -101,7 +101,7 @@ public class TimestampMatrix implements Serializable{
 	 * @param node
 	 * @param tsVector
 	 */
-	public void update(String node, TimestampVector tsVector)
+	public synchronized void update(String node, TimestampVector tsVector)
 	{
 		if (tsVector != null)
 		{
@@ -145,7 +145,7 @@ public class TimestampMatrix implements Serializable{
 	/**
 	 * clone
 	 */
-	public TimestampMatrix clone(){
+	public synchronized TimestampMatrix clone(){
 		
 		TimestampMatrix timestampMatrixCloned = new TimestampMatrix();
 		
@@ -168,7 +168,7 @@ public class TimestampMatrix implements Serializable{
 	 * equals
 	 */	
 	@Override
-	public boolean equals(Object obj) {
+	public synchronized boolean equals(Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
