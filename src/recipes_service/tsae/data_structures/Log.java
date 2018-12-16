@@ -87,7 +87,7 @@ public class Log implements Serializable{
 		}		
 		
 		// NOTE: From the question asked in the Forum, if there was no operation in the log
-		// It is accepeted whatever operation we receive, if there was operation in the log:
+		// It is accepted whatever operation we receive, if there was operation in the log:
 		// check if the current operation is next for the last stored in the log 
 		if (lastTimestamp==null || op.getTimestamp().compare(lastTimestamp) == 1)
 		{
@@ -99,12 +99,12 @@ public class Log implements Serializable{
 				return true;
 			}
 
-			//lsim.log(Level.TRACE, "Operation failed when being added: "+op);
+			//lsim.log(Level.ERROR, "Operation failed when being added: "+op);
 			return false;
 		}
 		else
 		{
-			//lsim.log(Level.TRACE, "Operation can not be inserted because there are some operations pending to be logged: "+op);
+			//lsim.log(Level.WARN, "Operation can not be inserted because there are some operations pending to be logged: "+op);
 			return false;
 		}		
 	}
@@ -203,20 +203,21 @@ public class Log implements Serializable{
 	 */
 	@Override
 	public synchronized boolean equals(Object obj) {
-		
+		if (obj == null)
+			return false;		
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!(obj instanceof Log))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		
 		Log other = (Log) obj;
-		if (log == null) {
-			if (other.log != null)
-				return false;
-		} else if (!log.equals(other.log))
+		
+		if (this.log == other.log)
+			return true;
+		if (this.log == null || other.log == null)
 			return false;
-		return true;
+		
+		return this.log.equals(other.log);
 	}
 
 	/**

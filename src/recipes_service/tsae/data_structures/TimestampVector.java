@@ -78,8 +78,7 @@ public class TimestampVector implements Serializable{
 		{
 			// Get the currentHostId from the operation timestamp
 			String currentHostId = timestamp.getHostid();
-			
-			timestampVector.replace(currentHostId, timestamp);
+			timestampVector.put(currentHostId, timestamp);	
 		}		
 	}
 	
@@ -105,7 +104,7 @@ public class TimestampVector implements Serializable{
 					// Compare if the Timestamp of the node passed by parameter is greater than the current one
 					if (this.getLast(nodeId).compare(tsVectorNodeValue) < 0) 
 					{
-						this.timestampVector.replace(nodeId, tsVectorNodeValue);
+						this.timestampVector.put(nodeId, tsVectorNodeValue);
 					}
 				}
 			}			
@@ -141,15 +140,17 @@ public class TimestampVector implements Serializable{
 				
 				// Get the value of the same nodeId for the other TimestampVector
 				Timestamp tsVectorNodeValue = tsVector.getLast(nodeId);
+				Timestamp thisTimestamp = this.getLast(nodeId);
 				
-				if (tsVectorNodeValue != null)
+				if (thisTimestamp == null)
+				{
+					this.timestampVector.put(nodeId, tsVectorNodeValue);
+				}
+				else if (this.getLast(nodeId).compare(tsVectorNodeValue) > 0) 
 				{
 					// Compare if the Timestamp of the node passed by parameter is greater than the current one
-					if (this.getLast(nodeId).compare(tsVectorNodeValue) > 0) 
-					{
-						this.timestampVector.replace(nodeId, tsVectorNodeValue);
-					}
-				}
+					this.timestampVector.replace(nodeId, tsVectorNodeValue);
+				}				
 			}			
 		}
 	}
@@ -168,19 +169,24 @@ public class TimestampVector implements Serializable{
 	 */
 	public synchronized boolean equals(Object obj)
 	{
-		if (this == obj)
-			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		
+		if (this == obj)
+			return true;
+		
+		if (!(obj instanceof TimestampVector))
 			return false;
+		
 		TimestampVector other = (TimestampVector) obj;
-		if (timestampVector == null) {
-			if (other.timestampVector != null)
-				return false;
-		} else if (!timestampVector.equals(other.timestampVector))
+		
+		if (this.timestampVector == other.timestampVector)
+			return true;
+		if (this.timestampVector == null || other.timestampVector  == null)
 			return false;
-		return true;
+		
+		return this.timestampVector.equals(other.timestampVector);
+			
 	}
 
 	/**

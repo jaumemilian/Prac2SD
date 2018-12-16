@@ -84,14 +84,12 @@ public class TimestampMatrix implements Serializable{
 				// Get the TimesampVector value of the same nodeId for the other TimestampMatrix
 				TimestampVector tsMatrixNodeVector = tsMatrix.getTimestampVector(nodeId);
 				
-				if (tsMatrixNodeVector != null)
-				{
-					// Get Current TimestampVector
-					TimestampVector currentVector = this.getTimestampVector(nodeId);
+				// Get Current TimestampVector
+				TimestampVector currentVector = this.getTimestampVector(nodeId);
 					
+				if (currentVector != null)
 					// Call the updateMax for the TimestampVector
-					currentVector.updateMax(tsMatrixNodeVector);
-				}
+					currentVector.updateMax(tsMatrixNodeVector);				
 			}		
 		}
 	}
@@ -102,11 +100,8 @@ public class TimestampMatrix implements Serializable{
 	 * @param tsVector
 	 */
 	public synchronized void update(String node, TimestampVector tsVector)
-	{
-		if (tsVector != null)
-		{
-			this.timestampMatrix.put(node, tsVector);
-		}
+	{		
+		this.timestampMatrix.put(node, tsVector);
 	}
 	
 	/**
@@ -126,7 +121,8 @@ public class TimestampMatrix implements Serializable{
 			String nodeId = node.nextElement();
 			
 			// Get the TimesampVector value
-			TimestampVector currentVector = this.getTimestampVector(nodeId);
+			//TimestampVector currentVector = this.getTimestampVector(nodeId);
+			TimestampVector currentVector = this.timestampMatrix.get(nodeId);
 			
 			// If it is the first time, get all the values from the current vector
 			if (minTimestampVector == null)
@@ -169,19 +165,25 @@ public class TimestampMatrix implements Serializable{
 	 */	
 	@Override
 	public synchronized boolean equals(Object obj) {
-		if (this == obj)
-			return true;
+		
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
+		
+		if (this == obj)
+			return true;
+		
+		if (!(obj instanceof TimestampMatrix))
 			return false;
+		
 		TimestampMatrix other = (TimestampMatrix) obj;
-		if (this.timestampMatrix == null) {
-			if (other.timestampMatrix != null)
-				return false;
-		} else if (!timestampMatrix.equals(other.timestampMatrix))
+		
+		if (this.timestampMatrix == other.timestampMatrix)
+			return true;
+		if (this.timestampMatrix == null || other.timestampMatrix  == null)
 			return false;
-		return true;
+		
+		return this.timestampMatrix.equals(other.timestampMatrix);
+		
 	}
 
 	
