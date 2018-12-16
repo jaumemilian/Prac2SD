@@ -25,6 +25,7 @@ import java.util.Timer;
 import java.util.Vector;
 
 import edu.uoc.dpcs.lsim.LSimFactory;
+import edu.uoc.dpcs.lsim.logger.LoggerManager.Level;
 import lsim.worker.LSimWorker;
 import recipes_service.activity_simulation.SimulationData;
 import recipes_service.communication.Host;
@@ -161,11 +162,19 @@ public class ServerData {
 		
 		Timestamp timestamp= nextTimestamp();
 		Recipe rcpe = this.recipes.get(recipeTitle);
-		Operation op = new RemoveOperation(recipeTitle, rcpe.getTimestamp(), timestamp);
+		if (rcpe != null)
+		{
+			Operation op = new RemoveOperation(recipeTitle, rcpe.getTimestamp(), timestamp);
 
-		this.log.add(op);
-		this.summary.updateTimestamp(timestamp);
-		this.recipes.remove(recipeTitle);
+			this.log.add(op);
+			this.summary.updateTimestamp(timestamp);
+			this.recipes.remove(recipeTitle);
+		}
+		else
+		{
+			lsim.log(Level.WARN, "Trying to remove a recipet that does not exist: " + recipeTitle);
+		}
+		
 	}
 	
 	public synchronized void processOperation(AddOperation addOperation)
